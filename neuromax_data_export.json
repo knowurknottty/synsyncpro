@@ -1,0 +1,131 @@
+
+{
+  "app": {
+    "name": "NeuroMax Professional Edition",
+    "version": "4.0.0"
+  },
+  "protocols": {
+    "neuro_analgesia": {
+      "title": "NeuroAnalgesia",
+      "description": "Chronic Pain Management",
+      "algoDesc": "10Hz Alpha carrier + 0.5Hz sub-delta triggers for endorphin release.",
+      "phases": [
+        {"duration": 600, "beat": 10, "carrier": 180, "harmonicStacking": true, "overlays": [528]},
+        {"duration": 900, "beat": 10, "carrier": 180, "isochronic": true, "overlays": [0.5, 1.5]},
+        {"duration": 300, "beat": 8, "carrier": 180}
+      ]
+    },
+    "mood_elevator": {
+      "title": "Mood Elevator",
+      "description": "Depression Countermeasures",
+      "algoDesc": "Beta (15-20Hz) and Gamma (40Hz) to counteract Frontal Alpha Asymmetry.",
+      "phases": [
+        {"duration": 300, "beat": 15, "carrier": 220, "isochronic": true},
+        {"duration": 600, "beat": 20, "carrier": 220, "harmonicStacking": true, "overlays": [40]},
+        {"duration": 300, "beat": 15, "carrier": 220}
+      ]
+    },
+    "neuro_recovery": {
+      "title": "NeuroRecovery",
+      "description": "Addiction & Trauma Processing",
+      "algoDesc": "Peniston Alpha-Theta Protocol (10Hz -> 5Hz crossover).",
+      "phases": [
+        {"duration": 300, "beat": 10, "carrier": 150},
+        {"duration": 900, "startBeat": 10, "endBeat": 5, "carrier": 150, "spatialMotion": "rotate"},
+        {"duration": 600, "beat": 5, "carrier": 150, "stochastic": true}
+      ]
+    },
+    "dopamine_reset": {
+      "title": "Dopamine Reset",
+      "description": "Impulse Control (SMR)",
+      "algoDesc": "SMR (12-15Hz) training for motor inhibition and impulse control.",
+      "phases": [
+        {"duration": 1200, "beat": 13.5, "carrier": 200, "isochronic": true, "harmonicStacking": true}
+      ]
+    },
+    "vagus_nerve_reset": {
+      "title": "Vagus Nerve Reset",
+      "description": "Polyvagal Stimulation",
+      "algoDesc": "40Hz physical rumble + Voo breathing.",
+      "phases": [
+        {"duration": 300, "beat": 0.5, "carrier": 40, "isochronic": true, "harmonicStacking": true},
+        {"duration": 600, "beat": 4, "carrier": 40, "isochronic": true, "overlays": [174]}
+      ]
+    },
+    "hemispheric_erasure": {
+      "title": "Hemispheric Erasure",
+      "description": "Rapid Lateral Switching",
+      "algoDesc": "Hard-panning modulation to flush working memory.",
+      "phases": [
+        {"duration": 600, "beat": 10, "carrier": 150, "spatialMotion": "random", "stochastic": true}
+      ]
+    },
+    "quantum_zeno": {
+      "title": "Quantum Zeno Stabilizer",
+      "description": "Recursive Shepard Tone",
+      "algoDesc": "Infinite descent illusion to lock focus.",
+      "phases": [
+        {"duration": 1200, "beat": 0, "carrier": 200, "spatialMotion": "rotate", "overlays": [432]}
+      ]
+    },
+    "neuro_focus_10": { "title": "NeuroFocus 10", "desc": "Mind Awake / Body Asleep" },
+    "neuro_focus_12": { "title": "NeuroFocus 12", "desc": "Expanded Awareness" },
+    "neuro_focus_15": { "title": "NeuroFocus 15", "desc": "No Time" },
+    "neuro_focus_21": { "title": "NeuroFocus 21", "desc": "The Bridge" },
+    "deep_sleep_v4": { "title": "Deep Sleep v4", "desc": "Delta Entrainment" },
+    "anxiety_relief_v4": { "title": "Anxiety Relief v4", "desc": "Alpha-Theta Border" },
+    "focus_v4": { "title": "Focus v4", "desc": "Beta/SMR" },
+    "learning_v4": { "title": "Learning v4", "desc": "5Hz Theta" },
+    "meditation_v4": { "title": "Meditation v4", "desc": "Theta Stability" },
+    "gamma_v4": { "title": "Gamma v4", "desc": "Flow State" },
+    "remote_viewing": { "title": "Remote Viewing", "desc": "Stargate Protocol" },
+    "schumann_sync": { "title": "Schumann Sync", "desc": "7.83Hz Grounding" },
+    "kundalini": { "title": "Kundalini", "desc": "Chakra Ramp" },
+    "third_eye": { "title": "Third Eye", "desc": "963Hz Pineal" },
+    "dmt_gateway": { "title": "DMT Gateway", "desc": "40Hz + Infrasound" },
+    "manifestation": { "title": "Manifestation", "desc": "7Hz Theta + 528Hz" },
+    "consciousness_expansion": { "title": "Consciousness Exp", "desc": "Theta-Gamma Nesting" },
+    "lucid_dreaming": { "title": "Lucid Dreaming", "desc": "WILD Support" },
+    "ce5_contact": {
+        "title": "CE-5 Contact Vector",
+        "desc": "Coherent Thought Sequencing",
+        "algoDesc": "432Hz Carrier + 3.5Hz Theta + Crop Circle Trills (Stochastic).",
+        "phases": [
+            { "duration": 600, "beat": 8, "carrier": 432 },
+            { "duration": 900, "beat": 3.5, "carrier": 432, "stochastic": true, "overlays": [528, 8000] },
+            { "duration": 300, "beat": 7.83, "carrier": 432 }
+        ]
+    },
+    "portal_generation": {
+        "title": "Portal I: Megalithic",
+        "desc": "111Hz Gateway Resonance",
+        "algoDesc": "111Hz + 0.1Hz Epsilon Beat to deactivate Prefrontal Cortex.",
+        "phases": [
+            { "duration": 1200, "beat": 0.1, "carrier": 111, "overlays": [963] },
+            { "duration": 1200, "beat": 0.1, "carrier": 111, "spatialMotion": "rotate" }
+        ]
+    },
+    "crystalline_portal": {
+        "title": "Portal II: Crystalline",
+        "desc": "523Hz High Light Frequency",
+        "algoDesc": "523Hz (High C) + 100Hz Hyper-Gamma for ascension mechanics.",
+        "phases": [
+            { "duration": 300, "beat": 40, "carrier": 523 },
+            { "duration": 900, "beat": 100, "carrier": 523, "isochronic": true, "overlays": [852, 963] },
+            { "duration": 300, "beat": 40, "carrier": 523 }
+        ]
+    }
+  },
+  "audio_engine_specs": {
+    "harmonic_stacking": "Generates Fundamental, Perfect 5th (1.5x), and Octave (2.0x) for every carrier.",
+    "isochronic_pulse": "Applies Gain LFO synced to Beat Frequency.",
+    "spatial_drift": "Slow LFO on PannerNode to rotate sound field.",
+    "stochastic_jitter": "Random +/- 5 cent detuning every 5-15s.",
+    "surround_mapping": "Carrier -> Center/Sub. Binaural Offset -> Front L/R. Atmosphere -> Rear L/R."
+  },
+  "export_specs": {
+    "formats": ["16-bit PCM", "24-bit PCM", "32-bit Float"],
+    "sample_rates": [44100, 48000, 88200, 96000],
+    "processing": ["-1.0 dBTP Normalization", "TPDF Dithering", "RIFF INFO Metadata Injection"]
+  }
+}
