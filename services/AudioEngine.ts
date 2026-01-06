@@ -1,4 +1,3 @@
-
 import { Protocol, Phase, NoiseType, QAMetrics, ExportConfig, BiofeedbackMetrics, AudioOutputMode } from '../types.ts';
 import { ProtocolVault } from './ProtocolVault.ts';
 
@@ -63,7 +62,8 @@ export class AudioEngine {
 
     constructor() {}
 
-    unlock(force: boolean = false) {
+    async unlock(force: boolean = false) {
+        // Create and play silent HTML audio element first
         if (!this._silentHtmlAudio) {
             this._silentHtmlAudio = new Audio();
             this._silentHtmlAudio.src = SILENT_WAV;
@@ -74,8 +74,14 @@ export class AudioEngine {
             document.body.appendChild(this._silentHtmlAudio);
         }
         
-        this._silentHtmlAudio.play().catch(() => {});
+        // Play silent audio to unlock iOS/Safari audio
+        try {
+            await this._silentHtmlAudio.play();
+        } catch(e) {
+            // Ignore play errors
+        }
 
+        // Initialize AudioContext if needed
         if (!this.audioContext) {
             const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
             this.audioContext = new AudioContextClass({ latencyHint: 'playback' });
@@ -117,11 +123,18 @@ export class AudioEngine {
             }, 50);
         }
 
+        // CRITICAL FIX FOR SAFARI: Always resume the AudioContext on user interaction
+        // Safari requires the resume to be called from a user gesture to properly unlock
         if (this.audioContext && this.audioContext.state === 'suspended') {
-            this.audioContext.resume();
+            try {
+                await this.audioContext.resume();
+            } catch(e) {
+                console.warn('Failed to resume AudioContext:', e);
+            }
         }
 
-        if (!this._keepAliveOsc && this.audioContext) {
+        // Create keep-alive oscillator to prevent context suspension
+        if (!this._keepAliveOsc && this.audioContext && this.audioContext.state === 'running') {
             try {
                 this._keepAliveOsc = this.audioContext.createOscillator();
                 this._keepAliveOsc.type = 'sine';
@@ -130,7 +143,9 @@ export class AudioEngine {
                 silentGain.gain.value = 0.0001; 
                 this._keepAliveOsc.connect(silentGain).connect(this.audioContext.destination);
                 this._keepAliveOsc.start();
-            } catch(e) {}
+            } catch(e) {
+                console.warn('Failed to create keep-alive oscillator:', e);
+            }
         }
     }
 
@@ -420,7 +435,7 @@ export class AudioEngine {
     }
 
     async playProtocol(protocol: Protocol) {
-        this.unlock(true);
+        await this.unlock(true);
         this.toggleWakeLock(true);
         this.stopImmediate();
         this.currentProtocol = protocol;
