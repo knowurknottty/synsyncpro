@@ -62,10 +62,8 @@ export class AudioEngine {
 
     constructor() {}
 
-    async unlock(force: boolean = false) {
-        // IMPORTANT (iOS/Safari): Initiate audio resume/play inside the user gesture call stack.
-        // Avoid `await` here; async functions run synchronously until the first await.
-
+    // CRITICAL: This MUST be synchronous (no async) for iOS Safari user gesture requirement
+    unlock(force: boolean = false) {
         if (!this._silentHtmlAudio) {
             this._silentHtmlAudio = new Audio();
             this._silentHtmlAudio.src = SILENT_WAV;
@@ -76,6 +74,7 @@ export class AudioEngine {
             document.body.appendChild(this._silentHtmlAudio);
         }
 
+        // Fire-and-forget: MUST stay inside user gesture call stack
         try {
             this._silentHtmlAudio.play().catch(() => {});
         } catch(e) {
@@ -124,14 +123,11 @@ export class AudioEngine {
         }
 
         if (this.audioContext && this.audioContext.state === 'suspended') {
-            try {
-                this.audioContext.resume().catch(() => {});
-            } catch(e) {
-                console.warn('Failed to resume AudioContext:', e);
-            }
+            // Fire-and-forget: MUST stay inside user gesture
+            this.audioContext.resume().catch(() => {});
         }
 
-        if (!this._keepAliveOsc && this.audioContext && this.audioContext.state === 'running') {
+        if (!this._keepAliveOsc && this.audioContext && this.audioContext.state !== 'closed') {
             try {
                 this._keepAliveOsc = this.audioContext.createOscillator();
                 this._keepAliveOsc.type = 'sine';
@@ -433,6 +429,7 @@ export class AudioEngine {
 
     playProtocol(protocol: Protocol) {
         this.unlock(true);
+        // Don't await toggleWakeLock; let it run async
         this.toggleWakeLock(true);
         this.stopImmediate();
         this.currentProtocol = protocol;
@@ -501,7 +498,7 @@ export class AudioEngine {
     }
 
     resume() {
-        if(this.audioContext) {
+        if(this.audioContext && this.audioContext.state === 'suspended') {
             this.audioContext.resume();
             this.isPlaying = true;
             this.toggleWakeLock(true);
