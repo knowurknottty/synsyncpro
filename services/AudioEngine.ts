@@ -63,7 +63,9 @@ export class AudioEngine {
     constructor() {}
 
     async unlock(force: boolean = false) {
-        // Create and play silent HTML audio element first
+        // IMPORTANT (iOS/Safari): Initiate audio resume/play inside the user gesture call stack.
+        // Avoid `await` here; async functions run synchronously until the first await.
+
         if (!this._silentHtmlAudio) {
             this._silentHtmlAudio = new Audio();
             this._silentHtmlAudio.src = SILENT_WAV;
@@ -73,15 +75,13 @@ export class AudioEngine {
             this._silentHtmlAudio.style.display = 'none';
             document.body.appendChild(this._silentHtmlAudio);
         }
-        
-        // Play silent audio to unlock iOS/Safari audio
+
         try {
-            await this._silentHtmlAudio.play();
+            this._silentHtmlAudio.play().catch(() => {});
         } catch(e) {
-            // Ignore play errors
+            // ignore
         }
 
-        // Initialize AudioContext if needed
         if (!this.audioContext) {
             const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
             this.audioContext = new AudioContextClass({ latencyHint: 'playback' });
@@ -123,17 +123,14 @@ export class AudioEngine {
             }, 50);
         }
 
-        // CRITICAL FIX FOR SAFARI: Always resume the AudioContext on user interaction
-        // Safari requires the resume to be called from a user gesture to properly unlock
         if (this.audioContext && this.audioContext.state === 'suspended') {
             try {
-                await this.audioContext.resume();
+                this.audioContext.resume().catch(() => {});
             } catch(e) {
                 console.warn('Failed to resume AudioContext:', e);
             }
         }
 
-        // Create keep-alive oscillator to prevent context suspension
         if (!this._keepAliveOsc && this.audioContext && this.audioContext.state === 'running') {
             try {
                 this._keepAliveOsc = this.audioContext.createOscillator();
@@ -434,8 +431,8 @@ export class AudioEngine {
         return nodes;
     }
 
-    async playProtocol(protocol: Protocol) {
-        await this.unlock(true);
+    playProtocol(protocol: Protocol) {
+        this.unlock(true);
         this.toggleWakeLock(true);
         this.stopImmediate();
         this.currentProtocol = protocol;

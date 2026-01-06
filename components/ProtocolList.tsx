@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from 'react';
 import { Protocol } from '../types';
 import { Brain, ChevronDown, ChevronRight, Folder, Layers, Zap, Shield, Activity, Monitor, Coffee, Eye, Sparkles, Wind, Heart, Globe, Lock, Pill, FlaskConical, Target, Battery, Moon, Thermometer, Radio, Droplets, FlaskRound, Flame, Microscope, Smile } from 'lucide-react';
@@ -35,14 +34,8 @@ const SECTIONS_CONFIG: Record<string, { label: string, icon: React.ElementType, 
 };
 
 export const ProtocolList: React.FC<ProtocolListProps> = ({ protocols, selectedId, onSelect, mode }) => {
-    const [openSections, setOpenSections] = useState<Record<string, boolean>>({
-        'Calibration': true,
-        'Performance Focus': true,
-        'Cannabis Mimicry': false,
-        'MDMA Mimicry': false,
-        'Stimulant Mimicry': false,
-        'Psychedelic Mimicry': false
-    });
+    // Default: all categories collapsed (so the archive never loads with expanded sections).
+    const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
 
     const toggleSection = (section: string) => {
         setOpenSections(prev => ({...prev, [section]: !prev[section]}));
@@ -91,11 +84,11 @@ export const ProtocolList: React.FC<ProtocolListProps> = ({ protocols, selectedI
     ].filter(section => groupedProtocols[section]);
 
     return (
-        <div className="space-y-3 overflow-y-auto max-h-[calc(100vh-250px)] pr-2 custom-scrollbar pb-20">
+        <div className="space-y-3">
             {sortedSections.map(section => {
                 const config = SECTIONS_CONFIG[section] || { label: section, icon: Folder, color: 'text-gray-400' };
                 const Icon = config.icon;
-                const isOpen = openSections[section];
+                const isOpen = !!openSections[section];
                 const count = groupedProtocols[section].length;
 
                 return (

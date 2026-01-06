@@ -40,8 +40,9 @@ const App: React.FC = () => {
         audioEngine.onComplete = () => setAudioState(s => ({...s, isPlaying: false, isPaused: false, currentProtocolId: null}));
     }, []);
 
-    const handlePlay = useCallback(async () => {
-        await audioEngine.unlock(true);
+    // NOTE: Keep this synchronous (no async/await) so iOS/Safari treats unlock/resume/play as a direct user gesture.
+    const handlePlay = useCallback(() => {
+        audioEngine.unlock(true);
         if (!activeProtocol) return;
 
         const isNewSelection = audioState.currentProtocolId !== activeProtocol.id;
@@ -54,7 +55,7 @@ const App: React.FC = () => {
             setAudioState(s => ({...s, isPaused: false}));
         } else {
             audioEngine.stopImmediate();
-            await audioEngine.playProtocol(activeProtocol);
+            audioEngine.playProtocol(activeProtocol);
             setAudioState({
                 ...audioState,
                 isPlaying: true, 
@@ -334,7 +335,7 @@ const App: React.FC = () => {
                                             <div key={idx} className="flex justify-between items-center bg-black/20 p-2 rounded text-[10px] font-mono">
                                                 <span className="text-gray-500">P{idx+1}</span>
                                                 <span className="text-neuro-400">{phase.carrier}Hz</span>
-                                                <span className="text-white">  {phase.beat || phase.startBeat}Hz</span>
+                                                <span className="text-white">Δ {phase.beat || phase.startBeat}Hz</span>
                                                 <span className="text-gray-500">{phase.duration}s</span>
                                             </div>
                                         ))}
