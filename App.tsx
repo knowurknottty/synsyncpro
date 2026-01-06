@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { AudioEngine } from './services/AudioEngine.ts';
 import { ProtocolVault } from './services/ProtocolVault.ts';
 import { AudioState, Protocol } from './types.ts';
 import { Visualizer } from './components/Visualizer.tsx';
 import { ProtocolList } from './components/ProtocolList.tsx';
-import { Play, Pause, Volume2, Wind, Sparkles, Cpu, Target, BookOpen, ShieldAlert, HardDrive, Microscope, FileText, Waves, LayoutList } from 'lucide-react';
+import { Play, Pause, Volume2, Wind, Sparkles, Cpu, Target, BookOpen, ShieldAlert, HardDrive, Microscope, FileText, Waves, LayoutList, MessageCircle } from 'lucide-react';
 import { SessionProgress } from './components/SessionProgress.tsx';
 import { SourcesModal } from './components/SourcesModal.tsx';
 import { LegalModal } from './components/LegalModal.tsx';
@@ -40,8 +40,8 @@ const App: React.FC = () => {
         audioEngine.onComplete = () => setAudioState(s => ({...s, isPlaying: false, isPaused: false, currentProtocolId: null}));
     }, []);
 
-    const handlePlay = useCallback(() => {
-        audioEngine.unlock(true); 
+    const handlePlay = useCallback(async () => {
+        await audioEngine.unlock(true);
         if (!activeProtocol) return;
 
         const isNewSelection = audioState.currentProtocolId !== activeProtocol.id;
@@ -54,7 +54,7 @@ const App: React.FC = () => {
             setAudioState(s => ({...s, isPaused: false}));
         } else {
             audioEngine.stopImmediate();
-            audioEngine.playProtocol(activeProtocol);
+            await audioEngine.playProtocol(activeProtocol);
             setAudioState({
                 ...audioState,
                 isPlaying: true, 
@@ -93,9 +93,9 @@ const App: React.FC = () => {
                     </div>
                 </header>
 
-                <main className="flex-1 overflow-hidden relative">
+                <main className="flex-1 overflow-hidden relative pb-20">
                     {mobileTab === 'archive' && (
-                        <div className="h-full flex flex-col p-4 animate-in fade-in duration-300">
+                        <div className="h-full flex flex-col p-4 animate-in fade-in duration-300 overflow-y-auto custom-scrollbar">
                              <div className="flex gap-2 bg-black/40 p-1 border border-neuro-700/50 mb-4 rounded-lg">
                                 <button onClick={() => setAppMode('scientific')} className={`flex-1 py-2 text-[10px] font-bold font-mono rounded ${appMode === 'scientific' ? 'bg-neuro-700 text-white' : 'text-gray-600'}`}>SCIENCE</button>
                                 <button onClick={() => setAppMode('speculative')} className={`flex-1 py-2 text-[10px] font-bold font-mono rounded ${appMode === 'speculative' ? 'bg-neuro-accent/20 text-neuro-accent' : 'text-gray-600'}`}>WOO WOO</button>
@@ -139,7 +139,7 @@ const App: React.FC = () => {
                     )}
 
                     {mobileTab === 'tech' && (
-                        <div className="h-full overflow-y-auto p-4 space-y-6 animate-in slide-in-from-right-4 duration-300 custom-scrollbar">
+                        <div className="h-full overflow-y-auto p-4 space-y-6 animate-in slide-in-from-right-4 duration-300 custom-scrollbar pb-20">
                             {activeProtocol ? (
                                 <>
                                     <ManualTuningPanel audioEngine={audioEngine} />
@@ -175,6 +175,15 @@ const App: React.FC = () => {
                         <Cpu className="w-5 h-5" />
                         <span className="text-[9px] font-bold uppercase">Technical</span>
                     </button>
+                    <a
+                        href="https://discord.gg/U7vfEJ6p"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex-1 flex flex-col items-center gap-1 py-2 rounded-lg transition-colors text-gray-500"
+                    >
+                        <MessageCircle className="w-5 h-5" />
+                        <span className="text-[9px] font-bold uppercase">Discord</span>
+                    </a>
                 </nav>
             </div>
         );
@@ -325,7 +334,7 @@ const App: React.FC = () => {
                                             <div key={idx} className="flex justify-between items-center bg-black/20 p-2 rounded text-[10px] font-mono">
                                                 <span className="text-gray-500">P{idx+1}</span>
                                                 <span className="text-neuro-400">{phase.carrier}Hz</span>
-                                                <span className="text-white">Δ {phase.beat || phase.startBeat}Hz</span>
+                                                <span className="text-white">  {phase.beat || phase.startBeat}Hz</span>
                                                 <span className="text-gray-500">{phase.duration}s</span>
                                             </div>
                                         ))}
