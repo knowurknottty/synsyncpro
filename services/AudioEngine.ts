@@ -27,6 +27,7 @@ export class AudioEngine {
     private _silentHtmlAudio: HTMLAudioElement | null = null;
     private _wakeLock: any = null;
     private _keepAliveOsc: OscillatorNode | null = null;
+    private _isUnlocked: boolean = false;
 
     outputMode: AudioOutputMode = 'headphones';
     noiseBuffers: Map<NoiseType, AudioBuffer> = new Map();
@@ -62,8 +63,10 @@ export class AudioEngine {
 
     constructor() {}
 
-    // CRITICAL: This MUST be synchronous (no async) for iOS Safari user gesture requirement
+    // CRITICAL: This MUST be synchronous and create+start a real audio node inside the user gesture
     unlock(force: boolean = false) {
+        if (this._isUnlocked && !force) return;
+
         if (!this._silentHtmlAudio) {
             this._silentHtmlAudio = new Audio();
             this._silentHtmlAudio.src = SILENT_WAV;
@@ -125,6 +128,24 @@ export class AudioEngine {
         if (this.audioContext && this.audioContext.state === 'suspended') {
             // Fire-and-forget: MUST stay inside user gesture
             this.audioContext.resume().catch(() => {});
+        }
+
+        // iOS FIX: Play a real oscillator node to fully unlock the context
+        // This MUST happen synchronously within the user gesture
+        if (this.audioContext && !this._isUnlocked) {
+            try {
+                const unlockOsc = this.audioContext.createOscillator();
+                const unlockGain = this.audioContext.createGain();
+                unlockGain.gain.value = 0.00001; // Nearly silent
+                unlockOsc.connect(unlockGain);
+                unlockGain.connect(this.audioContext.destination);
+                unlockOsc.start(this.audioContext.currentTime);
+                unlockOsc.stop(this.audioContext.currentTime + 0.001); // 1ms unlock tone
+                this._isUnlocked = true;
+                console.log('[AudioEngine] iOS unlock tone played');
+            } catch(e) {
+                console.warn('Failed to play unlock tone:', e);
+            }
         }
 
         if (!this._keepAliveOsc && this.audioContext && this.audioContext.state !== 'closed') {
