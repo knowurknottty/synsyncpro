@@ -166,7 +166,7 @@ const App: React.FC = () => {
                 <nav className="h-20 bg-neuro-800 border-t border-neuro-700 flex items-center px-2 pb-safe-area-pb z-50">
                     <button onClick={() => setMobileTab('archive')} className={`flex-1 flex flex-col items-center gap-1 py-2 rounded-lg transition-colors ${mobileTab === 'archive' ? 'text-neuro-500' : 'text-gray-500'}`}>
                         <LayoutList className="w-5 h-5" />
-                        <span className="text-[9px] font-bold uppercase">Archive</span>
+                        <span className="text-[9px] font-bold uppercase">Library</span>
                     </button>
                     <button onClick={() => setMobileTab('session')} className={`flex-1 flex flex-col items-center gap-1 py-2 rounded-lg transition-colors ${mobileTab === 'session' ? 'text-neuro-500' : 'text-gray-500'}`}>
                         <Sparkles className="w-5 h-5" />
@@ -351,7 +351,7 @@ const App: React.FC = () => {
                             </div>
                             <div className="space-y-2">
                                 <div className="text-sm tracking-[0.2em] text-neuro-500 uppercase">Awaiting Protocol Load</div>
-                                <div className="text-[10px] text-gray-500 max-w-xs mx-auto">Select a neurological node from the archive to begin calibration.</div>
+                                <div className="text-[10px] text-gray-500 max-w-xs mx-auto">Select a neurological node from the library to begin calibration.</div>
                             </div>
                         </div>
                     )}
